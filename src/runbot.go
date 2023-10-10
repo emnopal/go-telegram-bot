@@ -4,16 +4,16 @@ import (
 	config "github.com/emnopal/go-telegram-bot/src/config"
 	handler "github.com/emnopal/go-telegram-bot/src/handler"
 	loader "github.com/emnopal/go-telegram-bot/src/loader"
-	"gopkg.in/telebot.v3"
 )
 
-func RunBot() *telebot.Bot {
+func RunBot() {
 
-	botConf := config.BotConfig()
+	botConf := config.GetBotConfig()
+	botUpdateConf := config.GetUpdateBotConfig()
 
-	botInit := loader.BotInit(botConf)
+	bot := loader.BotInit(botConf)
 
-	bot := handler.BotHandler(botInit)
+	go handler.BotHandler(bot, botUpdateConf)
 
-	return bot
+	select {}
 }

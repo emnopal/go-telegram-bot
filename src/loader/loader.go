@@ -3,19 +3,22 @@ package loader
 import (
 	"log"
 
-	"gopkg.in/telebot.v3"
+	c "github.com/emnopal/go-telegram-bot/src/config"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-func BotInit(conf telebot.Settings) *telebot.Bot {
+func BotInit(conf c.BotConfig) *tgbotapi.BotAPI {
 
-	bot, err := telebot.NewBot(conf)
+	bot, err := tgbotapi.NewBotAPI(conf.Token)
+
+	bot.Debug = conf.Debug
 
 	if err != nil {
 		log.Fatal(err)
 		return nil
 	}
 
-	log.Printf("Authorized as @%s", bot.Me.Username)
+	log.Printf("Authorized as @%s", bot.Self.UserName)
 
 	return bot
 }

@@ -5,6 +5,5 @@ import (
 )
 
 func main() {
-	bot := runbot.RunBot()
-	bot.Start()
+	runbot.RunBot()
 }

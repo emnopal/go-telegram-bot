@@ -1,6 +1,6 @@
 # Telegram Bot
 
-Simple Telegram Bot using Golang
+Simple Telegram Bot using Golang with [telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api)
 
 ## How to run
 
@@ -22,3 +22,4 @@ For advanced modification just change `config.go`, `loader.go` or `runbot.go` as
 1. Add advanced handler (maybe games, downloader or feeds)
 2. Add UnitTest
 3. Add docker
+4. Handle message other than text

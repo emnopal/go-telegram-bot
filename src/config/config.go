@@ -3,13 +3,18 @@ package config
 import (
 	"log"
 	"os"
-	"time"
+	"strconv"
 
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/joho/godotenv"
-	"gopkg.in/telebot.v3"
 )
 
-func BotConfig() telebot.Settings {
+type BotConfig struct {
+	Token string
+	Debug bool
+}
+
+func GetBotConfig() BotConfig {
 	err := godotenv.Load()
 
 	if err != nil {
@@ -17,13 +22,22 @@ func BotConfig() telebot.Settings {
 	}
 
 	token := os.Getenv("TELEGRAM_TOKEN")
+	debug, err := strconv.ParseBool(os.Getenv("TELEGRAM_BOT_DEBUG"))
 
-	conf := telebot.Settings{
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	conf := BotConfig{
 		Token: token,
-		Poller: &telebot.LongPoller{
-			Timeout: 10 * time.Second,
-		},
+		Debug: debug,
 	}
 
 	return conf
+}
+
+func GetUpdateBotConfig() tgbotapi.UpdateConfig {
+	updateConfig := tgbotapi.NewUpdate(0)
+	updateConfig.Timeout = 60
+	return updateConfig
 }

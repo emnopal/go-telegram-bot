@@ -3,37 +3,56 @@ package handler
 import (
 	"log"
 
-	"gopkg.in/telebot.v3"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-func BotHandler(bot *telebot.Bot) *telebot.Bot {
+func botHandlerSendText(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, text string) {
+	response := tgbotapi.NewMessage(msg.Chat.ID, text)
+	bot.Send(response)
+}
 
-	bot.Handle("/start", func(c telebot.Context) error {
-		err := c.Send("Hello, I'm your bot! Send me a message.")
-		if err != nil {
-			log.Fatal(err)
-		}
-		return err
-	})
+func botHandlerText(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
+	text := msg.Text
+	log.Printf("User send: %s", text)
 
-	bot.Handle("/end", func(c telebot.Context) error {
-		err := c.Send("Bye")
-		if err != nil {
-			log.Fatal(err)
-		}
-		return err
-	})
-
-	bot.Handle(telebot.OnText, func(c telebot.Context) error {
-		text := c.Message().Text
-		log.Printf("User send: %s", text)
+	switch text {
+	case "/start":
+		textToSend := "Hello, I'm your bot! Send me a message."
+		botHandlerSendText(bot, msg, textToSend)
+	case "/end":
+		textToSend := "Bye"
+		botHandlerSendText(bot, msg, textToSend)
+	default:
 		reply := "You said: " + text
-		err := c.Send(reply)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return err
-	})
+		botHandlerSendText(bot, msg, reply)
+	}
+}
 
-	return bot
+// TODO: Handle Audio, Photos, Videos, Sticker etc
+func botHandlerMessage(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
+
+	if msg.Text == "" {
+		log.Println("User send other than text which is not yet implemented")
+		botHandlerSendText(bot, msg, "Still not implemented other than text")
+		return
+	}
+
+	botHandlerText(bot, msg)
+}
+
+func BotHandler(bot *tgbotapi.BotAPI, config tgbotapi.UpdateConfig) {
+
+	updates, err := bot.GetUpdatesChan(config)
+
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	for update := range updates {
+		if update.Message == nil {
+			continue
+		}
+
+		botHandlerMessage(bot, update.Message)
+	}
 }
