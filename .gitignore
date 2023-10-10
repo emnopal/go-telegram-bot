@@ -19,3 +19,9 @@
 
 # Go workspace file
 go.work
+
+# credentials
+.env
+
+# mac trash file
+.DS_Store
