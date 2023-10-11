@@ -1,7 +1,7 @@
 package src
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,7 +13,7 @@ import (
 
 func RunBot() {
 
-	fmt.Println("Press Ctrl+C to exit.")
+	log.Println("Press Ctrl+C to exit.")
 
 	botConf := config.GetBotConfig()
 
@@ -27,6 +27,7 @@ func RunBot() {
 	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT)
 
 	<-interruptChan
-	fmt.Println("\nReceived Ctrl+C. Exiting...")
+	log.Println()
+	log.Println("Received Ctrl+C. Exiting...")
 
 }
